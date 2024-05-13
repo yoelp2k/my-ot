@@ -115,7 +115,7 @@ h4 {
     flex-direction: column;
     justify-content: center; /* Aligns children vertically in the center */
     align-items: center; /* Aligns children horizontally in the center */
-    height: 80vh; 
+    height: 70vh; 
     text-align: center; /* Centers text */
     padding: 20px; /* Padding around the edges */
     box-sizing: border-box; /* Includes padding in the height calculation */
