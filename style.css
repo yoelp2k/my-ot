@@ -153,3 +153,10 @@ header {
     box-shadow: 0 2px 4px rgba(0,0,0,0.3); /* Optional shadow */
 }
 
+[dir="rtl"] {
+    text-align: right; /* Align text to the right for RTL languages */
+}
+
+[dir="ltr"] {
+    text-align: left; /* Align text to the left for LTR languages */
+}
