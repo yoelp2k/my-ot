@@ -4,19 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="title">Maly Pinhas - Occupational Therapist</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
-        .hidden { display: none; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <button onclick="switchLanguage('en')">EN</button>
-    <button onclick="switchLanguage('he')">HE</button>
-    
-    <h1 id="heading">Maly Pinhas</h1>
-    <p id="description">Occupational Therapist</p>
-    <p id="contact">Contact: <a href="mailto:maly@my-ot.eu">Contact</a></p>
-
-    <script src="./script.js"></script>
+    <div class="language-selector">
+        <button class="lang-btn" onclick="switchLanguage('en')">EN</button>
+        <button class="lang-btn" onclick="switchLanguage('he')">HE</button>
+    </div>
+    <header>
+        <h1 id="heading">Maly Pinhas</h1>
+        <p id="description">Occupational Therapist</p>
+    </header>
+    <section class="contact">
+        <p id="contact">Contact: <a href="mailto:maly@my-ot.eu">maly@my-ot.eu</a></p>
+    </section>
+    <script src="script.js"></script>
 </body>
 </html>
