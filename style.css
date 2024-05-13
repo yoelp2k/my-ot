@@ -5,17 +5,22 @@
     box-sizing: border-box;
 }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #333;
-    line-height: 1.6;
-    padding: 20px;
-    background-color: #f4f4f9;
+:root {
+    --background-color: #f4f4f9; /* Light theme background */
+    --text-color: #333; /* Dark text for light theme */
+    --primary-color: #007bff; /* Primary blue */
+    --secondary-color: #0056b3; /* Darker blue */
+    --contact-bg-light: rgba(255, 255, 255, 0.8); /* Semi-transparent background for light theme */
+    --contact-bg-dark: rgba(44, 44, 44, 0.8); /* Earthy dark background for dark theme */
 }
 
-header {
+body {
+    font-family: 'Lato', sans-serif;
+    color: var(--text-color);
+    line-height: 1.6;
+    padding: 20px;
+    background-color: var(--background-color);
     text-align: center;
-    margin: 20px 0;
 }
 
 .language-selector {
@@ -25,7 +30,7 @@ header {
 }
 
 .lang-btn {
-    background-color: #007BFF;
+    background-color: var(--primary-color);
     border: none;
     border-radius: 5px;
     color: white;
@@ -36,23 +41,112 @@ header {
 }
 
 .lang-btn:hover {
-    background-color: #0056b3;
+    background-color: var(--secondary-color);
 }
 
-.contact {
-    background-color: white;
+h1, h4 {
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+h1 {
+    margin-top: 20px;
+    font-size: 2.5rem;
+}
+
+h4 {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    color: #666;
+}
+
+.btn-info {
+    background-color: #6c757d; /* A neutral, soft gray replacing the cyan */
+    border-color: #6c757d;
+}
+
+.btn-info:hover {
+    background-color: #5a6268; /* Slightly darker shade for hover */
+    border-color: #545b62;
+}
+
+.contact, .card {
+    background-color: var(--contact-bg-light);
     padding: 20px;
     margin-top: 20px;
-    text-align: center;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .contact a {
-    color: #007BFF;
+    color: var(--primary-color);
+    font-size: 1.2rem;
     text-decoration: none;
 }
 
 .contact a:hover {
     text-decoration: underline;
+}
+
+/* Dark theme styles */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-color: #333;
+        --text-color: #f8f9fa;
+        --contact-bg-light: var(--contact-bg-dark); /* Update for dark theme */
+    }
+
+    body {
+        background-color: var(--background-color);
+        color: var(--text-color);
+    }
+
+    .contact, .card {
+        background-color: var(--contact-bg-dark);
+        color: var(--text-color);
+    }
+
+    .contact a {
+        color: #4a90e2; /* Brighter link color for better visibility */
+    }
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Aligns children vertically in the center */
+    align-items: center; /* Aligns children horizontally in the center */
+    height: 80vh; 
+    text-align: center; /* Centers text */
+    padding: 20px; /* Padding around the edges */
+    box-sizing: border-box; /* Includes padding in the height calculation */
+}
+
+header {
+    margin-top: 0; /* Reset any top margin */
+    margin-bottom: 20px; /* Space between header and buttons */
+}
+
+.contact, .card {
+    margin-top: 20px; /* Space above contact */
+    margin-bottom: 20px; /* Space below card if expanded */
+}
+
+/* Ensure buttons are visible and accessible */
+.contact, .card, .language-selector {
+    z-index: 1; /* Brings your clickable elements above the background if necessary */
+}
+
+/* Responsive Adjustments for smaller screens */
+@media (max-height: 800px) {
+    .container { 
+        padding: 10px; /* Reduces padding to fit smaller screens */
+    }
+}
+
+#portrait {
+    position: fixed; /* Fixed position relative to the viewport */
+    top: 20px; /* Space from the top */
+    left: 20px; /* Space from the left */
+    max-width: 15%; /* Maximum size relative to the viewport width */
+    max-height: 15%; /* Maximum size relative to the viewport height */
 }

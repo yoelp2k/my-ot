@@ -22,8 +22,10 @@ function switchLanguage(lang) {
 function applyTranslations(data) {
     document.getElementById('title').textContent = data.title;
     document.getElementById('heading').textContent = data.heading;
+    document.getElementById('subheading').textContent = data.subheading;
     document.getElementById('description').textContent = data.description;
-    document.getElementById('contact').innerHTML = `<a href="mailto:${data.email}">${data.contact}</a>`;
+    document.getElementById('more-info-btn').textContent = data.more;
+    document.getElementById('contact-link').innerHTML = `<a href="mailto:${data.email}">${data.contact}</a>`;
 }
 
 // Initialize with default language
