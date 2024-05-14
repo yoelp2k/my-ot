@@ -15,17 +15,17 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '20'
 
       - name: Bump Version
         run: |
           echo "Bumping version..."
-          version=$(cat path/to/script.js | cut -d '=' -f2)
+          version=$(cat ./script.js | cut -d '=' -f2)
           major=$(echo $version | cut -d '.' -f1)
           minor=$(echo $version | cut -d '.' -f2)
           new_minor=$((minor + 1))
           new_version="$major.$new_minor"
-          echo "version=$new_version" > path/to/script.js
+          echo "version=$new_version" > ./script.js
           echo "NEW_VERSION=$new_version" >> $GITHUB_ENV
 
       - name: Commit and push if necessary
