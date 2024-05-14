@@ -1,4 +1,4 @@
-name: CI/CD Workflow
+name: Increment Version
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '20'
 
       - name: Bump Version
         run: |
