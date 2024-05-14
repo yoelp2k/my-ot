@@ -11,17 +11,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0  # Ensures you fetch all history for all branches and tags
           persist-credentials: false  # This avoids conflicts with the GITHUB_TOKEN
 
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: '16'  # Use a valid LTS version of Node.js
 
-      - name: Check commit messages
+      - name: Check commit messages - exit if this is a 'skip ci' commit
         run: |
             git log --pretty=format:%s ${{ github.event.before }}..${{ github.event.after }} | while read line ; do
               echo "Commit message: $line"
@@ -43,15 +43,22 @@ jobs:
           sed -i "s/Version [0-9]*\.[0-9]*\.[0-9]*/Version $new_version/" ./script.js
           echo "NEW_VERSION=$new_version" >> $GITHUB_ENV
 
-      - name: Commit changes to version-bump branch
+      - name: Commit changes to version-bump branch and force push to prod
         run: |
             git config user.email "action@github.com"
             git config user.name "GitHub Action"
+            
+            echo "Creating and pushing version-bump branch"
             git checkout -b version-bump
             git add .
             git commit -m "Bump version to ${{ env.NEW_VERSION }} [skip ci]"
             git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} version-bump --force
+            
+            echo "Checking out and resetting prod branch to match main"
             git fetch
             git checkout prod
             git reset --hard origin/main  # Reset the prod branch to match main
+            
+            echo "Pushing changes to prod branch"
             git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} prod --force
+
