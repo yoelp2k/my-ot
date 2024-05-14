@@ -1,0 +1,44 @@
+name: CI/CD Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  increment-version-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Bump Version
+        run: |
+          echo "Bumping version..."
+          version=$(cat path/to/script.js | cut -d '=' -f2)
+          major=$(echo $version | cut -d '.' -f1)
+          minor=$(echo $version | cut -d '.' -f2)
+          new_minor=$((minor + 1))
+          new_version="$major.$new_minor"
+          echo "version=$new_version" > path/to/script.js
+          echo "NEW_VERSION=$new_version" >> $GITHUB_ENV
+
+      - name: Commit and push if necessary
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "Bump version to ${{ env.NEW_VERSION }}"
+          git push
+
+      - name: Push changes to prod branch
+        run: |
+          git fetch
+          git checkout prod
+          git merge --no-ff main -m "Merging changes from main to prod with new version ${{ env.NEW_VERSION }}"
+          git push origin prod

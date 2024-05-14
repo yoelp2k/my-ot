@@ -46,3 +46,8 @@ function showLanguageLoadError(lang) {
 
 // Initialize with default language
 switchLanguage('en');
+
+// Version update
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('version-display').textContent = 'Version 1.0.0';
+});
