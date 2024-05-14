@@ -50,5 +50,5 @@ switchLanguage('en');
 // Version update
 document.addEventListener('DOMContentLoaded', function() {
     /** version will automatically be updated on each push by ./.github/workflows/increment-versio.yml */
-    document.getElementById('version-display').textContent = 'Version 1.0.15';
+    document.getElementById('version-display').textContent = 'Version 1.0.16';
 });
