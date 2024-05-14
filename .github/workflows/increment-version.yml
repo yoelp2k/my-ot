@@ -30,8 +30,8 @@ jobs:
 
       - name: Commit and push if necessary
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config --local user.email "yoel.pinhas@gmail.com"
+          git config --local user.name "yoelp2k"
           git add .
           git commit -m "Bump version to ${{ env.NEW_VERSION }}"
           git push
