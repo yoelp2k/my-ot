@@ -47,6 +47,6 @@ jobs:
   
       - name: Merge main to prod and push
         run: |
-            git merge main --no-ff -m "Merging main to prod with new version
+            git merge main --no-ff -m "Merging main to prod with new version"
             git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} origin prod 
             
