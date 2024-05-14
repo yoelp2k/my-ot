@@ -7,7 +7,7 @@ on:
 
 jobs:
   increment-version-and-deploy:
-    if: !contains(github.event.head_commit.message, '[skip ci]')
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -51,20 +51,7 @@ jobs:
             git add .
             git commit -m "Bump version to ${{ env.NEW_VERSION }} [skip ci]"
             git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} version-bump --force
-
-      - name: Merge version-bump into main
-        run: |
-            git fetch
-            git checkout main
-            git merge version-bump
-            git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} main
-
-      - name: Checkout prod branch
-        run: |
             git fetch
             git checkout prod
             git reset --hard origin/main  # Reset the prod branch to match main
-          
-      - name: Force push prod branch
-        run: |            
             git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} prod --force
