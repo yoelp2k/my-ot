@@ -34,11 +34,11 @@ jobs:
 
       - name: Commit changes to main
         run: |
-            git config user.email "yoel.pinhas@gmail.com"
-            git config user.name "yoelp2k"
+            git config user.email "action@github.com"
+            git config user.name "GitHub Action"
             git add .
             git commit -m "Bump version to ${{ env.NEW_VERSION }}" || echo "No changes to commit"
-            git push
+            git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }}
   
       - name: Checkout prod branch
         run: |
@@ -47,5 +47,6 @@ jobs:
   
       - name: Merge main to prod and push
         run: |
-            git merge main --no-ff -m "Merging main to prod with new version ${{ env.NEW_VERSION }}"
-            git push origin prod
+            git merge main --no-ff -m "Merging main to prod with new version
+            git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} origin prod 
+            
