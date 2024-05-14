@@ -7,10 +7,7 @@ on:
 
 jobs:
   increment-version-and-deploy:
-    if: >
-      github.event.head_commit.message != 'AUTO_PUSH' &&
-      !contains(github.event.head_commit.message, '[skip ci]') &&
-      github.ref != 'refs/heads/version-bump'
+    if: !contains(github.event.head_commit.message, '[skip ci]')
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
