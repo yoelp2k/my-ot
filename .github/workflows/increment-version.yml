@@ -7,6 +7,7 @@ on:
 
 jobs:
   increment-version-and-deploy:
+    if: "github.event.head_commit.message != 'AUTO_PUSH' && !contains(github.event.head_commit.message, '[skip ci]')"
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -19,7 +20,15 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '16'  # Use a valid LTS version of Node.js
-
+      - name: Check commit messages
+        run: |
+            git log --pretty=format:%s ${{ github.event.before }}..${{ github.event.after }} | while read line ; do
+              echo "Commit message: $line"
+              if [[ "$line" == *"AUTO_PUSH"* || "$line" == *"[skip ci]"* ]]; then
+                echo "Found skip keyword in commit message, skipping job."
+                exit 78  # Exiting with specific code to neutralize workflow
+              fi
+            done
       - name: Bump Version
         run: |
           echo "Bumping version..."
@@ -44,9 +53,9 @@ jobs:
         run: |
             git fetch
             git checkout prod
-  
-      - name: Merge main to prod and push
-        run: |
-            git merge main --no-ff -m "Merging main to prod with new version"
-            git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} origin prod 
-            
+            git reset --hard origin/main  # Reset the prod branch to match main
+          
+      - name: Force push prod branch
+        run: |            
+            git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} prod --force
+                      
