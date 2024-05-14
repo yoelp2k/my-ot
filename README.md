@@ -12,4 +12,4 @@ This project uses two primary branches to manage the development and deployment 
 
 ## Automatic bump version 
 
-For each push to main, the version string in `script.js` will be automatically incremented (the patch part) 
+For each push to main, the version string in `script.js` will be automatically incremented (the patch part). Do change the patch number, only the minor/major.
