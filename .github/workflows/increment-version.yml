@@ -32,11 +32,20 @@ jobs:
           sed -i "s/Version [0-9]*\.[0-9]*\.[0-9]*/Version $new_version/" ./script.js
           echo "NEW_VERSION=$new_version" >> $GITHUB_ENV
 
-      - name: Commit and push changes to prod branch
+      - name: Commit changes to main
         run: |
-          git config user.email "action@github.com"
-          git config user.name "GitHub Action"
-          git add .
-          git commit -m "Bump version to ${{ env.NEW_VERSION }}" || echo "No changes to commit"
-          git push --force-with-lease https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} prod
-
+            git config user.email "action@github.com"
+            git config user.name "GitHub Action"
+            git add .
+            git commit -m "Bump version to ${{ env.NEW_VERSION }}" || echo "No changes to commit"
+            git push
+  
+      - name: Checkout prod branch
+        run: |
+            git fetch
+            git checkout prod
+  
+      - name: Merge main to prod and push
+        run: |
+            git merge main --no-ff -m "Merging main to prod with new version ${{ env.NEW_VERSION }}"
+            git push origin prod
