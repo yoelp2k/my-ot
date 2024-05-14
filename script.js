@@ -20,7 +20,7 @@ function switchLanguage(lang) {
             })
             .catch(error => {
                 console.error('Error loading the language file:', error);
-                showLanguageLoadError(lang); // Handle and display load errors
+                showLanguageLoadError(lang); 
             });
     }
 }
