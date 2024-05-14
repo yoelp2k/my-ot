@@ -1,4 +1,4 @@
-name: Increment Version
+name: Increment Version and Deploy
 
 on:
   push:
@@ -11,34 +11,31 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Ensures you fetch all history for all branches and tags
+          persist-credentials: false  # This avoids conflicts with the GITHUB_TOKEN
 
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '20'
+          node-version: '16'  # Use a valid LTS version of Node.js
 
       - name: Bump Version
         run: |
           echo "Bumping version..."
-          version=$(cat ./script.js | cut -d '=' -f2)
+          version=$(cat ./script.js | grep -o 'Version [0-9]*\.[0-9]*\.[0-9]*' | awk '{print $2}')
           major=$(echo $version | cut -d '.' -f1)
           minor=$(echo $version | cut -d '.' -f2)
-          new_minor=$((minor + 1))
-          new_version="$major.$new_minor"
-          echo "version=$new_version" > ./script.js
+          patch=$(echo $version | cut -d '.' -f3)
+          new_patch=$((patch + 1))
+          new_version="$major.$minor.$new_patch"
+          sed -i "s/Version [0-9]*\.[0-9]*\.[0-9]*/Version $new_version/" ./script.js
           echo "NEW_VERSION=$new_version" >> $GITHUB_ENV
 
-      - name: Commit and push if necessary
+      - name: Commit and push changes to prod branch
         run: |
-          git config --local user.email "yoel.pinhas@gmail.com"
-          git config --local user.name "yoelp2k"
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
           git add .
-          git commit -m "Bump version to ${{ env.NEW_VERSION }}"
-          git push
-
-      - name: Push changes to prod branch
-        run: |
-          git fetch
-          git checkout prod
-          git merge --no-ff main -m "Merging changes from main to prod with new version ${{ env.NEW_VERSION }}"
-          git push origin prod
+          git commit -m "Bump version to ${{ env.NEW_VERSION }}" || echo "No changes to commit"
+          git push https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:prod
