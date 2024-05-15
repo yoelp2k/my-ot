@@ -81,6 +81,12 @@ jobs:
           git config user.email "action@github.com"
           git config user.name "GitHub Action"
           
+          echo "🔄 Fetching latest updates"
+          git fetch origin
+          echo "🔄 Checking out main branch"
+          git checkout prod
+          echo "🔄 Merging bump-version into main with fast-forward"
+          git merge --ff-only main
           echo "🚀 Pushing changes to prod branch"
           git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} prod --force
           echo "✅ Pushed changes to prod branch"
