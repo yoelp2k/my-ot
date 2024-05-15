@@ -49,7 +49,7 @@ jobs:
           echo "NEW_VERSION=$new_version" >> $GITHUB_ENV
           echo "✅ Version bumped to $new_version"
 
-      - name: 🚀 Commit changes to bump-version branch and force push to prod
+      - name: 🚀 Commit changes to bump-version branch
         run: |
           git config user.email "action@github.com"
           git config user.name "GitHub Action"
@@ -60,12 +60,22 @@ jobs:
           git commit -m "Bump version to ${{ env.NEW_VERSION }} [skip ci]"
           git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} bump-version --force
           echo "✅ Pushed bump-version branch"
-          
+
+      - name: 🔄 Checkout and reset prod branch to match main
+        run: |
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+
           echo "🔄 Checking out and resetting prod branch to match main"
           git fetch origin
           git checkout prod
           git reset --hard origin/main  # Reset the prod branch to match main
           echo "✅ Prod branch reset to match main"
+          
+      - name: 🚀 Push changes to prod branch
+        run: |
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
           
           echo "🚀 Pushing changes to prod branch"
           git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} prod --force
@@ -73,6 +83,9 @@ jobs:
   
       - name: 🔄 Merge bump-version into main
         run: |
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+
           echo "🔄 Fetching latest updates"
           git fetch origin
           echo "🔄 Checking out main branch"
