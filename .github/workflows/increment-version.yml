@@ -44,18 +44,32 @@ jobs:
           echo "NEW_VERSION=$new_version" >> $GITHUB_ENV
           echo "✅ Version bumped to $new_version"
 
-      - name: Commit changes to version-bump branch and force push to prod
+      - name: Commit changes to bump-version branch
         run: |
             git config user.email "action@github.com"
             git config user.name "GitHub Action"
             
-            echo "🚀 Creating and pushing version-bump branch"
-            git checkout -b version-bump
+            echo "🚀 Creating and pushing bump-version branch"
+            git checkout -b bump-version
             git add .
             git commit -m "Bump version to ${{ env.NEW_VERSION }} [skip ci]"
-            git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} version-bump --force
-            echo "✅ Pushed version-bump branch"
-            
+            git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} bump-version
+            echo "✅ Pushed bump-version branch"
+
+      - name: Merge bump-version into main
+        run: |
+            echo "🔄 Fetching latest updates"
+            git fetch origin
+            echo "🔄 Checking out main branch"
+            git checkout main
+            echo "🔄 Merging bump-version into main"
+            git merge bump-version
+            echo "🚀 Pushing changes to main branch"
+            git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} main
+            echo "✅ Merged bump-version into main and pushed changes"
+                        
+      - name: Merge bump-version into prod
+        run: |
             echo "🔄 Checking out and resetting prod branch to match main"
             git fetch origin
             git checkout prod
@@ -65,15 +79,3 @@ jobs:
             echo "🚀 Pushing changes to prod branch"
             git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} prod --force
             echo "✅ Pushed changes to prod branch"
-
-      - name: Merge version-bump into main
-        run: |
-            echo "🔄 Fetching latest updates"
-            git fetch origin
-            echo "🔄 Checking out main branch"
-            git checkout main
-            echo "🔄 Merging version-bump into main"
-            git merge version-bump
-            echo "🚀 Pushing changes to main branch"
-            git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} main
-            echo "✅ Merged version-bump into main and pushed changes"
