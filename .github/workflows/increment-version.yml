@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      
+
 permissions:  
     contents: write
     id-token: write  # If required for other actions
@@ -60,7 +60,7 @@ jobs:
           git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} bump-version
           echo "✅ Pushed bump-version branch"
 
-      - name: Merge bump-version into main
+      - name: Merge bump-version into main/prod
         run: |
           echo "🔄 Fetching latest updates"
           git fetch origin
@@ -71,9 +71,6 @@ jobs:
           echo "🚀 Pushing changes to main branch"
           git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} main
           echo "✅ Merged bump-version into main and pushed changes"
-                        
-      - name: Merge bump-version into prod
-        run: |
           echo "🔄 Checking out and resetting prod branch to match main"
           git fetch origin
           git checkout prod
