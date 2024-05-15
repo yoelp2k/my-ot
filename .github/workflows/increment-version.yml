@@ -78,7 +78,7 @@ jobs:
           echo "🔄 Checking out main branch"
           git checkout main
           echo "🔄 Merging bump-version into main"
-          git merge --ff-only bump-version
+          git merge bump-version
           echo "🚀 Pushing changes to main branch"
           git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} main
           echo "✅ Merged bump-version into main and pushed changes"
