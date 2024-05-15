@@ -5,34 +5,40 @@ on:
     branches:
       - main
 
+permissions:  
+    contents: write
+    id-token: write  # If required for other actions
+
 jobs:
   increment-version-and-deploy:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
+      - name: 📥 Check out code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Ensures you fetch all history for all branches and tags
           persist-credentials: false  # This avoids conflicts with the GITHUB_TOKEN
 
-      - name: Setup Node.js
+      - name: 🛠 Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'  
+          node-version: '20'  # Use the latest LTS version of Node.js
 
-      - name: Check commit messages - exit if this is a 'skip ci' commit
+      - name: 📝 Check commit messages - exit if this is a 'skip ci' commit
         run: |
+            echo "🔍 Checking commit messages for 'AUTO_PUSH' or '[skip ci]' keywords..."
             git log --pretty=format:%s ${{ github.event.before }}..${{ github.event.after }} | while read line ; do
               echo "Commit message: $line"
               if [[ "$line" == *"AUTO_PUSH"* || "$line" == *"[skip ci]"* ]]; then
-                echo "Found skip keyword in commit message, skipping job."
+                echo "⏭️ Found skip keyword in commit message, skipping job."
                 exit 78  # Exiting with specific code to neutralize workflow
               fi
             done
-      - name: Bump Version
+
+      - name: ⬆️ Bump Version
         run: |
-          echo "Bumping version..."
+          echo "📈 Bumping version..."
           version=$(cat ./script.js | grep -o 'Version [0-9]*\.[0-9]*\.[0-9]*' | awk '{print $2}')
           major=$(echo $version | cut -d '.' -f1)
           minor=$(echo $version | cut -d '.' -f2)
@@ -41,29 +47,38 @@ jobs:
           new_version="$major.$minor.$new_patch"
           sed -i "s/Version [0-9]*\.[0-9]*\.[0-9]*/Version $new_version/" ./script.js
           echo "NEW_VERSION=$new_version" >> $GITHUB_ENV
+          echo "✅ Version bumped to $new_version"
 
-
-      - name: Commit changes to bump-version branch and force push to prod
+      - name: 🚀 Commit changes to bump-version branch and force push to prod
         run: |
           git config user.email "action@github.com"
           git config user.name "GitHub Action"
           
-          echo "Creating and pushing bump-version branch"
+          echo "🚀 Creating and pushing bump-version branch"
           git checkout -b bump-version
           git add .
           git commit -m "Bump version to ${{ env.NEW_VERSION }} [skip ci]"
           git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} bump-version --force
+          echo "✅ Pushed bump-version branch"
           
-          echo "Checking out and resetting prod branch to match main"
+          echo "🔄 Checking out and resetting prod branch to match main"
+          git fetch origin
           git checkout prod
           git reset --hard origin/main  # Reset the prod branch to match main
+          echo "✅ Prod branch reset to match main"
           
-          echo "Pushing changes to prod branch"
+          echo "🚀 Pushing changes to prod branch"
           git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} prod --force
+          echo "✅ Pushed changes to prod branch"
   
-      - name: Merge bump-version into main
+      - name: 🔄 Merge bump-version into main
         run: |
-          git fetch
+          echo "🔄 Fetching latest updates"
+          git fetch origin
+          echo "🔄 Checking out main branch"
           git checkout main
+          echo "🔄 Merging bump-version into main"
           git merge bump-version
-          git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} main          
+          echo "🚀 Pushing changes to main branch"
+          git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} main
+          echo "✅ Merged bump-version into main and pushed changes"
