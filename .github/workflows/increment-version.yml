@@ -62,12 +62,14 @@ jobs:
           echo "🔄 Checking out and resetting prod branch to match main"
           git fetch origin
           git checkout prod
-          git reset --hard origin/main  # Reset the prod branch to match main
-          echo "✅ Prod branch reset to match main"
+          # git reset --hard origin/main  # Reset the prod branch to match main
+          # echo "✅ Prod branch reset to match main"
+          echo "🔄 Merging bump-version into prod"
+          git merge bump-version
           
           echo "🚀 Pushing changes to prod branch"
-          git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} prod --force
-          echo "✅ Pushed changes to prod branch"
+          git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} prod
+          echo "✅ Merged bump-version into prod and pushed changes"
   
       - name: 🔄 Merge bump-version into main
         run: |
