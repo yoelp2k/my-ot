@@ -38,7 +38,7 @@ jobs:
       - name: Bump Version
         run: |
           echo "📈 Bumping version..."
-          version=$(cat ./script.js | grep -o 'Version [0-9]*\.[0-9]*\.[0-9]*' | awk '{print $2}')
+          version=$(grep -o 'Version [0-9]*\.[0-9]*\.[0-9]*' ./script.js | awk '{print $2}')
           major=$(echo $version | cut -d '.' -f1)
           minor=$(echo $version | cut -d '.' -f2)
           patch=$(echo $version | cut -d '.' -f3)
@@ -60,8 +60,11 @@ jobs:
           git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} bump-version
           echo "✅ Pushed bump-version branch"
 
-      - name: Merge bump-version into main/prod
+      - name: Merge bump-version into main
         run: |
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+
           echo "🔄 Fetching latest updates"
           git fetch origin
           echo "🔄 Checking out main branch"
@@ -71,6 +74,12 @@ jobs:
           echo "🚀 Pushing changes to main branch"
           git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} main
           echo "✅ Merged bump-version into main and pushed changes"
+
+      - name: Merge bump-version into prod
+        run: |
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+
           echo "🔄 Checking out and resetting prod branch to match main"
           git fetch origin
           git checkout prod
