@@ -61,26 +61,6 @@ jobs:
           git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} bump-version --force
           echo "✅ Pushed bump-version branch"
 
-      - name: 🔄 Checkout and reset prod branch to match main
-        run: |
-          git config user.email "action@github.com"
-          git config user.name "GitHub Action"
-
-          echo "🔄 Checking out and resetting prod branch to match main"
-          git fetch origin
-          git checkout prod
-          git reset --hard origin/main  # Reset the prod branch to match main
-          echo "✅ Prod branch reset to match main"
-          
-      - name: 🚀 Push changes to prod branch
-        run: |
-          git config user.email "action@github.com"
-          git config user.name "GitHub Action"
-          
-          echo "🚀 Pushing changes to prod branch"
-          git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} prod --force
-          echo "✅ Pushed changes to prod branch"
-  
       - name: 🔄 Merge bump-version into main
         run: |
           git config user.email "action@github.com"
@@ -95,3 +75,13 @@ jobs:
           echo "🚀 Pushing changes to main branch"
           git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} main
           echo "✅ Merged bump-version into main and pushed changes"
+            
+      - name: 🚀 Push changes to prod branch
+        run: |
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          
+          echo "🚀 Pushing changes to prod branch"
+          git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} prod --force
+          echo "✅ Pushed changes to prod branch"
+  
