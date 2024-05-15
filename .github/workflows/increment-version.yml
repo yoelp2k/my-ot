@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Ensures you fetch all history for all branches and tags
           persist-credentials: false  # This avoids conflicts with the GITHUB_TOKEN
