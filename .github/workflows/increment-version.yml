@@ -47,7 +47,6 @@ jobs:
           sed -i "s/Version [0-9]*\.[0-9]*\.[0-9]*/Version $new_version/" ./script.js
           echo "NEW_VERSION=$new_version" >> $GITHUB_ENV
           echo "✅ Version bumped to $new_version"
-          
       - name: 🚀 Commit changes to bump-version branch and force push to prod
         run: |
           git config user.email "action@github.com"
@@ -59,15 +58,7 @@ jobs:
           git commit -m "Bump version to ${{ env.NEW_VERSION }} [skip ci]"
           git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} bump-version --force
           echo "✅ Pushed bump-version branch"
-
-          echo "🔄 Checking out main branch"
-          git checkout main
-          echo "🔄 Merging bump-version into main"
-          git merge bump-version
-          echo "🚀 Pushing changes to main branch"
-          git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} main
-          echo "✅ Merged bump-version into main and pushed changes"
-
+          
           echo "🔄 Checking out and resetting prod branch to match main"
           git fetch origin
           git checkout prod
@@ -78,3 +69,14 @@ jobs:
           git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} prod --force
           echo "✅ Pushed changes to prod branch"
   
+      - name: 🔄 Merge bump-version into main
+        run: |
+          echo "🔄 Fetching latest updates"
+          git fetch origin
+          echo "🔄 Checking out main branch"
+          git checkout main
+          echo "🔄 Merging bump-version into main"
+          git merge bump-version
+          echo "🚀 Pushing changes to main branch"
+          git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} main
+          echo "✅ Merged bump-version into main and pushed changes"
