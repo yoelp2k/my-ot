@@ -35,7 +35,6 @@ jobs:
                 exit 78  # Exiting with specific code to neutralize workflow
               fi
             done
-
       - name: ⬆️ Bump Version
         run: |
           echo "📈 Bumping version..."
@@ -48,8 +47,8 @@ jobs:
           sed -i "s/Version [0-9]*\.[0-9]*\.[0-9]*/Version $new_version/" ./script.js
           echo "NEW_VERSION=$new_version" >> $GITHUB_ENV
           echo "✅ Version bumped to $new_version"
-
-      - name: 🚀 Commit changes to bump-version branch
+          
+      - name: 🚀 Commit changes to bump-version branch and force push to prod
         run: |
           git config user.email "action@github.com"
           git config user.name "GitHub Action"
@@ -61,32 +60,20 @@ jobs:
           git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} bump-version --force
           echo "✅ Pushed bump-version branch"
 
-      - name: 🔄 Merge bump-version into main
-        run: |
-          git config user.email "action@github.com"
-          git config user.name "GitHub Action"
-
-          echo "🔄 Fetching latest updates"
-          git fetch origin
           echo "🔄 Checking out main branch"
           git checkout main
-          echo "🔄 Merging bump-version into main with fast-forward"
-          git merge --ff-only bump-version
+          echo "🔄 Merging bump-version into main"
+          git merge bump-version
           echo "🚀 Pushing changes to main branch"
           git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} main
           echo "✅ Merged bump-version into main and pushed changes"
-            
-      - name: 🚀 Push changes to prod branch
-        run: |
-          git config user.email "action@github.com"
-          git config user.name "GitHub Action"
-          
-          echo "🔄 Fetching latest updates"
+
+          echo "🔄 Checking out and resetting prod branch to match main"
           git fetch origin
-          echo "🔄 Checking out main branch"
           git checkout prod
-          echo "🔄 Merging bump-version into main with fast-forward"
-          git merge --ff-only main
+          git reset --hard origin/main  # Reset the prod branch to match main
+          echo "✅ Prod branch reset to match main"
+          
           echo "🚀 Pushing changes to prod branch"
           git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} prod --force
           echo "✅ Pushed changes to prod branch"
